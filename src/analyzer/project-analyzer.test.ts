@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, beforeEach } from "node:test";
+import assert from "node:assert/strict";
 import { ProjectAnalyzer } from "./project-analyzer.js";
 import * as path from "path";
 import * as os from "os";
@@ -18,8 +19,8 @@ describe("ProjectAnalyzer", () => {
     const analyzer = new ProjectAnalyzer(tempDir);
     const result = analyzer.analyze();
 
-    expect(result.project.language).toBe("typescript");
-    expect(result.detected.patterns).toContain("nodejs");
+    assert.equal(result.project.language, "typescript");
+    assert(result.detected.patterns.includes("nodejs"));
   });
 
   it("should detect Python project", () => {
@@ -29,8 +30,8 @@ describe("ProjectAnalyzer", () => {
     const analyzer = new ProjectAnalyzer(tempDir);
     const result = analyzer.analyze();
 
-    expect(result.project.language).toBe("python");
-    expect(result.detected.patterns).toContain("python");
+    assert.equal(result.project.language, "python");
+    assert(result.detected.patterns.includes("python"));
   });
 
   it("should detect Docker project", () => {
@@ -40,8 +41,8 @@ describe("ProjectAnalyzer", () => {
     const analyzer = new ProjectAnalyzer(tempDir);
     const result = analyzer.analyze();
 
-    expect(result.project.deployment).toBe("container");
-    expect(result.detected.patterns).toContain("containerized");
+    assert.equal(result.project.deployment, "container");
+    assert(result.detected.patterns.includes("containerized"));
   });
 
   it("should analyze confidence level", () => {
@@ -51,7 +52,7 @@ describe("ProjectAnalyzer", () => {
     const analyzer = new ProjectAnalyzer(tempDir);
     const result = analyzer.analyze();
 
-    expect(result.confidence).toBeGreaterThan(0);
-    expect(result.confidence).toBeLessThanOrEqual(1);
+    assert(result.confidence > 0);
+    assert(result.confidence <= 1);
   });
 });

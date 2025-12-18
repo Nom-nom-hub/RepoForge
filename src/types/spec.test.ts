@@ -1,4 +1,5 @@
-import { describe, it, expect } from "vitest";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { SpecSchema, ProjectSchema, StandardsSchema } from "./spec.js";
 
 describe("Spec Schema", () => {
@@ -12,7 +13,7 @@ describe("Spec Schema", () => {
         risk: "internal" as const,
       };
 
-      expect(() => ProjectSchema.parse(project)).not.toThrow();
+      assert.doesNotThrow(() => ProjectSchema.parse(project));
     });
 
     it("should reject invalid project type", () => {
@@ -24,7 +25,7 @@ describe("Spec Schema", () => {
         risk: "internal",
       };
 
-      expect(() => ProjectSchema.parse(project)).toThrow();
+      assert.throws(() => ProjectSchema.parse(project));
     });
   });
 
@@ -35,9 +36,9 @@ describe("Spec Schema", () => {
       };
 
       const result = StandardsSchema.parse(standards);
-      expect(result.ci).toBe("strict");
-      expect(result.security).toBe("enforced");
-      expect(result.releases).toBe("strict");
+      assert.equal(result.ci, "strict");
+      assert.equal(result.security, "enforced");
+      assert.equal(result.releases, "strict");
     });
   });
 
@@ -59,7 +60,7 @@ describe("Spec Schema", () => {
         },
       };
 
-      expect(() => SpecSchema.parse(spec)).not.toThrow();
+      assert.doesNotThrow(() => SpecSchema.parse(spec));
     });
 
     it("should add defaults for missing version", () => {
@@ -77,7 +78,7 @@ describe("Spec Schema", () => {
       };
 
       const result = SpecSchema.parse(spec);
-      expect(result.version).toBe("1.0.0");
+      assert.equal(result.version, "1.0.0");
     });
   });
 });

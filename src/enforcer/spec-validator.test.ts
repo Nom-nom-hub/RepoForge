@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, beforeEach } from "node:test";
+import assert from "node:assert/strict";
 import { SpecValidator } from "./spec-validator.js";
 import { Spec } from "../types/spec.js";
 
@@ -33,8 +34,8 @@ describe("SpecValidator", () => {
 
     const result = validator.validate(spec, files);
 
-    expect(result.valid).toBe(true);
-    expect(result.violations).toHaveLength(0);
+    assert.equal(result.valid, true);
+    assert.equal(result.violations.length, 0);
   });
 
   it("should detect missing required CI workflow", () => {
@@ -43,9 +44,9 @@ describe("SpecValidator", () => {
 
     const result = validator.validate(spec, files);
 
-    expect(result.valid).toBe(false);
-    expect(result.violations.length).toBeGreaterThan(0);
-    expect(result.violations.some((v) => v.rule === "required-workflow")).toBe(true);
+    assert.equal(result.valid, false);
+    assert(result.violations.length > 0);
+    assert(result.violations.some((v) => v.rule === "required-workflow"));
   });
 
   it("should detect missing security workflow with enforced level", () => {
@@ -58,7 +59,7 @@ describe("SpecValidator", () => {
     const violations = result.violations.filter(
       (v) => v.severity === "error" && v.rule === "required-workflow"
     );
-    expect(violations.length).toBeGreaterThan(0);
+    assert(violations.length > 0);
   });
 
   it("should allow warnings for permissive mode", () => {
@@ -70,7 +71,7 @@ describe("SpecValidator", () => {
     const errorViolations = result.violations.filter(
       (v) => v.severity === "error"
     );
-    expect(errorViolations).toHaveLength(0);
+    assert.equal(errorViolations.length, 0);
   });
 
   it("should detect drift from baseline", () => {
@@ -84,8 +85,8 @@ describe("SpecValidator", () => {
 
     const drifts = validator.checkDrift(spec, baseline, current);
 
-    expect(drifts).toHaveLength(1);
-    expect(drifts[0].rule).toBe("file-modified");
+    assert.equal(drifts.length, 1);
+    assert.equal(drifts[0].rule, "file-modified");
   });
 
   it("should detect deleted required files", () => {
@@ -97,7 +98,7 @@ describe("SpecValidator", () => {
 
     const drifts = validator.checkDrift(spec, baseline, current);
 
-    expect(drifts).toHaveLength(1);
-    expect(drifts[0].rule).toBe("file-deleted");
+    assert.equal(drifts.length, 1);
+    assert.equal(drifts[0].rule, "file-deleted");
   });
 });

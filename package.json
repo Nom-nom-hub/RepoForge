@@ -18,9 +18,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "echo 'Tests temporarily disabled - see VITEST_CONFIG_ISSUE.md'",
-    "test:watch": "vitest",
-    "test:cov": "vitest run --coverage",
+    "test": "node --test dist/**/*.test.js",
     "lint": "eslint src --fix",
     "type-check": "tsc --noEmit",
     "prepublishOnly": "npm run build && npm run type-check && npm run test || true"
@@ -51,9 +49,6 @@
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.0.3",
-    "@vitest/ui": "^4.0.16",
-    "tsx": "^4.21.0",
-    "typescript": "^5.3.3",
-    "vitest": "^4.0.16"
+    "typescript": "^5.3.3"
   }
 }

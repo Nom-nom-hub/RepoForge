@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, beforeEach } from "node:test";
+import assert from "node:assert/strict";
 import { VersionManager } from "./version-manager.js";
 
 describe("VersionManager", () => {
@@ -10,42 +11,42 @@ describe("VersionManager", () => {
 
   it("should return latest version", () => {
     const latest = manager.getLatestVersion();
-    expect(latest).toBeDefined();
-    expect(latest).toMatch(/^\d+\.\d+\.\d+$/);
+    assert(latest !== undefined);
+    assert(/^\d+\.\d+\.\d+$/.test(latest));
   });
 
   it("should get version metadata", () => {
     const meta = manager.getVersionMetadata("1.0.0");
-    expect(meta).toBeDefined();
-    expect(meta?.version).toBe("1.0.0");
-    expect(meta?.features).toContain("Initial release");
+    assert(meta !== undefined);
+    assert.equal(meta?.version, "1.0.0");
+    assert(meta?.features.includes("Initial release"));
   });
 
   it("should plan minor upgrade", () => {
     const guide = manager.planUpgrade("1.0.0", "1.1.0");
 
-    expect(guide.from).toBe("1.0.0");
-    expect(guide.to).toBe("1.1.0");
-    expect(guide.backupRequired).toBe(false);
+    assert.equal(guide.from, "1.0.0");
+    assert.equal(guide.to, "1.1.0");
+    assert.equal(guide.backupRequired, false);
   });
 
   it("should plan major upgrade", () => {
     const guide = manager.planUpgrade("1.0.0", "2.0.0");
 
-    expect(guide.from).toBe("1.0.0");
-    expect(guide.to).toBe("2.0.0");
-    expect(guide.backupRequired).toBe(true);
+    assert.equal(guide.from, "1.0.0");
+    assert.equal(guide.to, "2.0.0");
+    assert.equal(guide.backupRequired, true);
   });
 
   it("should detect when already at target version", () => {
     const guide = manager.planUpgrade("1.0.0", "1.0.0");
 
-    expect(guide.steps).toHaveLength(0);
+    assert.equal(guide.steps.length, 0);
   });
 
   it("should include breaking changes in metadata", () => {
     const meta = manager.getVersionMetadata("2.0.0");
-    expect(meta?.breakingChanges.length).toBeGreaterThan(0);
+    assert(meta && meta.breakingChanges.length > 0);
   });
 
   it("should generate migration script", () => {
@@ -68,7 +69,7 @@ describe("VersionManager", () => {
     const guide = manager.planUpgrade("1.0.0", "1.1.0");
     const migrations = manager.generateMigrationScript(spec, guide);
 
-    expect(migrations).toBeDefined();
-    expect(migrations.size).toBeGreaterThanOrEqual(0);
+    assert(migrations !== undefined);
+    assert(migrations.size >= 0);
   });
 });

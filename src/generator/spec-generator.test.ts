@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, beforeEach } from "node:test";
+import assert from "node:assert/strict";
 import { SpecGenerator } from "./spec-generator.js";
 
 describe("SpecGenerator", () => {
@@ -19,10 +20,10 @@ describe("SpecGenerator", () => {
 
     const spec = generator.generateSpec(project);
 
-    expect(spec.version).toBe("1.0.0");
-    expect(spec.project).toEqual(project);
-    expect(spec.standards.ci).toBe("strict");
-    expect(spec.standards.security).toBe("enforced");
+    assert.equal(spec.version, "1.0.0");
+    assert.deepEqual(spec.project, project);
+    assert.equal(spec.standards.ci, "strict");
+    assert.equal(spec.standards.security, "enforced");
   });
 
   it("should fail with incomplete project", () => {
@@ -32,9 +33,10 @@ describe("SpecGenerator", () => {
       // missing runtime, deployment
     };
 
-    expect(() =>
-      generator.generateSpec(project as any)
-    ).toThrow("Incomplete project definition");
+    assert.throws(
+      () => generator.generateSpec(project as any),
+      /Incomplete project definition/
+    );
   });
 
   it("should validate a generated spec", () => {
@@ -49,8 +51,8 @@ describe("SpecGenerator", () => {
     const spec = generator.generateSpec(project);
     const validation = generator.validateSpec(spec);
 
-    expect(validation.valid).toBe(true);
-    expect(validation.errors).toHaveLength(0);
+    assert.equal(validation.valid, true);
+    assert.equal(validation.errors.length, 0);
   });
 
   it("should add metadata to spec", () => {
@@ -64,8 +66,8 @@ describe("SpecGenerator", () => {
 
     const spec = generator.generateSpec(project);
 
-    expect(spec.metadata).toBeDefined();
-    expect(spec.metadata?.generated).toBeDefined();
-    expect(spec.metadata?.generatedBy).toBe("repoctl@0.1.0");
+    assert(spec.metadata !== undefined);
+    assert(spec.metadata?.generated !== undefined);
+    assert.equal(spec.metadata?.generatedBy, "repoctl@0.1.0");
   });
 });
