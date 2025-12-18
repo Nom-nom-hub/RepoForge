@@ -189,12 +189,12 @@ MIT
 
   private getProjectDescription(spec: Spec): string {
     const typeMap: Record<string, string> = {
-      "backend-api": "A production-grade backend API service",
-      frontend: "A modern frontend application",
-      cli: "A command-line interface application",
-      library: "A reusable software library",
-      monorepo: "A monorepo managing multiple packages",
-      "static-site": "A static website",
+      "backend-api": "production-grade backend API service",
+      frontend: "modern frontend application",
+      cli: "command-line interface application",
+      library: "reusable software library",
+      monorepo: "monorepo managing multiple packages",
+      "static-site": "static website",
     };
 
     const runtimeInfo = spec.project.runtime
