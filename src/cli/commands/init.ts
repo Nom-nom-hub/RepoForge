@@ -3,6 +3,11 @@ import { ProjectAnalyzer } from "../../analyzer/project-analyzer.js";
 import { SpecGenerator } from "../../generator/spec-generator.js";
 import { WorkflowGenerator } from "../../generator/workflow-generator.js";
 import { FileGenerator } from "../../generator/file-generator.js";
+import { PluginRegistry } from "../../plugins/plugin-registry.js";
+import { NodePlugin } from "../../plugins/node-plugin.js";
+import { PythonPlugin } from "../../plugins/python-plugin.js";
+import { GoPlugin } from "../../plugins/go-plugin.js";
+import { RustPlugin } from "../../plugins/rust-plugin.js";
 import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
@@ -35,6 +40,16 @@ export const initCommand = new Command("init")
       console.log("\n🏗️  Generating files...");
       const workflowGen = new WorkflowGenerator();
       const fileGen = new FileGenerator();
+      
+      // Initialize plugin registry
+      const registry = new PluginRegistry();
+      registry.register(new NodePlugin());
+      registry.register(new PythonPlugin());
+      registry.register(new GoPlugin());
+      registry.register(new RustPlugin());
+      
+      // Execute language-specific plugins
+      const pluginOutput = await registry.executeAll(spec);
 
       const workflows = [
         workflowGen.generateCIWorkflow(spec),
@@ -43,6 +58,11 @@ export const initCommand = new Command("init")
       ];
 
       const files = fileGen.generateFiles(spec);
+      
+      // Merge plugin-generated files
+      for (const [path, content] of pluginOutput.files) {
+        files.push({ path, content });
+      }
 
       console.log(`✓ Generated ${files.length} files and ${workflows.length} workflows`);
 
