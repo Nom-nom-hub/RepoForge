@@ -1,0 +1,24 @@
+# Project
+
+> RepoForge is a CLI-first, policy-driven automation platform.(https://github.com/repoforge/repoforge)
+
+## Overview
+
+This is a `backend-api` project written in `typescript`.
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Testing
+
+```bash
+npm test
+```
+
+## License
+
+MIT

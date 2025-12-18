@@ -1,0 +1,17 @@
+version: "1.0.0"
+
+project:
+  type: backend-api
+  language: typescript
+  runtime: node20
+  deployment: container
+  risk: internal
+
+standards:
+  ci: strict
+  security: enforced
+  releases: strict
+
+metadata:
+  generated: "2024-01-15T10:30:00Z"
+  generatedBy: "repoctl@0.1.0"

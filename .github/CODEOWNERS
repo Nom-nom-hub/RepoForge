@@ -1,0 +1,9 @@
+# CODEOWNERS
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners
+* Nom-nom-hub
+
+# Assign specific paths to team members
+# /src/  @Nom-nom-hub
+# .github/workflows/ @Nom-nom-hub

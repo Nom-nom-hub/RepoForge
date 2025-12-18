@@ -1,0 +1,106 @@
+name: 'RepoForge Enforcer'
+description: 'Enforce RepoForge repository standards'
+author: 'RepoForge'
+
+inputs:
+  spec-file:
+    description: 'Path to RepoForge spec file'
+    required: false
+    default: 'repoforge.yaml'
+  strict:
+    description: 'Fail on warnings'
+    required: false
+    default: 'false'
+  check-workflows:
+    description: 'Validate workflow files'
+    required: false
+    default: 'true'
+
+outputs:
+  status:
+    description: 'Validation status (pass/fail)'
+    value: ${{ steps.validate.outputs.status }}
+  violations:
+    description: 'Number of violations found'
+    value: ${{ steps.validate.outputs.violations }}
+
+runs:
+  using: composite
+  steps:
+    - name: Validate Spec File
+      id: validate
+      shell: bash
+      run: |
+        SPEC_FILE="${{ inputs.spec-file }}"
+        
+        if [ ! -f "$SPEC_FILE" ]; then
+          echo "❌ Spec file not found: $SPEC_FILE"
+          echo "status=fail" >> $GITHUB_OUTPUT
+          echo "violations=1" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+        
+        echo "✓ Spec file found"
+        
+        # Check YAML validity
+        python3 -c "import yaml; yaml.safe_load(open('$SPEC_FILE'))" || {
+          echo "❌ Invalid YAML in $SPEC_FILE"
+          echo "status=fail" >> $GITHUB_OUTPUT
+          exit 1
+        }
+        
+        echo "✓ Spec file is valid YAML"
+    
+    - name: Check Required Files
+      if: inputs.check-workflows == 'true'
+      shell: bash
+      run: |
+        REQUIRED=(
+          ".github/workflows/ci.yml"
+          ".github/workflows/security.yml"
+        )
+        
+        MISSING=0
+        for file in "${REQUIRED[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Missing: $file"
+            ((MISSING++))
+          fi
+        done
+        
+        if [ $MISSING -gt 0 ]; then
+          echo "❌ $MISSING required files missing"
+          exit 1
+        fi
+        
+        echo "✓ All required files present"
+    
+    - name: Validate Workflows
+      if: inputs.check-workflows == 'true'
+      shell: bash
+      run: |
+        echo "Validating workflow files..."
+        find .github/workflows -name "*.yml" -o -name "*.yaml" | while read file; do
+          echo "  Checking $file..."
+          python3 -c "import yaml; yaml.safe_load(open('$file'))" || {
+            echo "❌ Invalid YAML: $file"
+            exit 1
+          }
+        done
+        echo "✓ All workflows are valid"
+    
+    - name: Check Security Workflow
+      shell: bash
+      run: |
+        if [ -f ".github/workflows/security.yml" ]; then
+          if ! grep -q "codeql-action/init\|CodeQL" .github/workflows/security.yml; then
+            echo "⚠️  Security workflow may not include CodeQL"
+          fi
+          echo "✓ Security workflow present"
+        fi
+    
+    - name: Report Status
+      if: always()
+      shell: bash
+      run: |
+        echo "::notice::RepoForge validation completed"
