@@ -5,7 +5,7 @@
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
-    "repoctl": "./dist/cli/index.js"
+    "repoctl": "dist/cli/index.js"
   },
   "repository": {
     "type": "git",
