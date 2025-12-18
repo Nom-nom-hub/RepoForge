@@ -91,15 +91,17 @@ jobs:
     name: Secret Scanning
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       
-      - name: Scan for secrets
-        uses: trufflesecurity/trufflehog@main
-        with:
-          path: ./
-          base: \${{ github.event.repository.default_branch }}
-          extra_args: --debug --json
+      - name: Scan for hardcoded secrets
+        run: |
+          # Check for common secret patterns
+          if grep -r "PRIVATE\|SECRET\|PASSWORD\|API_KEY\|TOKEN" . \
+            --include="*.js" --include="*.ts" --include="*.json" \
+            --exclude-dir=node_modules --exclude-dir=dist 2>/dev/null | grep -v "//" | grep -v "#"; then
+            echo "⚠️  Potential secrets found in code"
+            exit 1
+          fi
+          echo "✓ No obvious secrets detected"
 `,
     };
   }
