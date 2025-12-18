@@ -18,7 +18,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "node --test dist/**/*.test.js",
+    "test": "node dist/test-runner.js",
     "lint": "eslint src --fix",
     "type-check": "tsc --noEmit",
     "prepublishOnly": "npm run build && npm run type-check && npm run test || true"
