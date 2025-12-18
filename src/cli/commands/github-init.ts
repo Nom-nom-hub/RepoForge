@@ -4,6 +4,7 @@ import { SpecGenerator } from "../../generator/spec-generator.js";
 import { WorkflowGenerator } from "../../generator/workflow-generator.js";
 import { FileGenerator } from "../../generator/file-generator.js";
 import { GitHubClient } from "../../github/github-client.js";
+import { defaultRegistry } from "../../policies/policy-pack.js";
 import * as yaml from "js-yaml";
 
 export const githubInitCommand = new Command("github-init")
@@ -12,6 +13,7 @@ export const githubInitCommand = new Command("github-init")
   .requiredOption("--repo <repo>", "Repository name")
   .requiredOption("--token <token>", "GitHub personal access token")
   .option("--dir <path>", "Local repo path for analysis (default: cwd)")
+  .option("--policy <pack>", "Policy pack to use (startup, saas, enterprise, oss)")
   .action(async (options) => {
     try {
       console.log("🔍 Analyzing project...");
@@ -26,7 +28,14 @@ export const githubInitCommand = new Command("github-init")
 
       console.log("\n📝 Generating spec...");
       const specGenerator = new SpecGenerator();
-      const spec = specGenerator.generateSpec(analysis.project);
+      let spec = specGenerator.generateSpec(analysis.project);
+
+      // Apply policy pack if specified
+      if (options.policy) {
+        console.log(`📦 Applying policy pack: ${options.policy}`);
+        const packed = defaultRegistry.apply(spec, options.policy);
+        spec = { ...spec, ...packed };
+      }
 
       const validation = specGenerator.validateSpec(spec);
       if (!validation.valid) {
