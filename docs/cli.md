@@ -282,6 +282,178 @@ repoctl upgrade --to 2.0.0
 
 ---
 
+### repoctl apply
+
+Apply spec-driven changes locally to the repository.
+
+**Usage**:
+```bash
+repoctl apply [options]
+```
+
+**Options**:
+- `--spec <path>`: Path to spec file (default: repoforge.yaml)
+- `--dry-run`: Preview changes without writing
+- `--force`: Force overwrite without confirming
+
+**Example**:
+```bash
+# Preview what would be applied
+repoctl apply --dry-run
+
+# Apply the spec to current repo
+repoctl apply
+
+# Use custom spec
+repoctl apply --spec custom-spec.yaml
+```
+
+**Output**:
+Writes generated files to the filesystem:
+- Workflows to `.github/workflows/`
+- Config files (.editorconfig, .gitattributes)
+- Documentation files
+
+---
+
+### repoctl local-fix
+
+Automatically fix RepoForge spec violations locally without GitHub.
+
+**Usage**:
+```bash
+repoctl local-fix [options]
+```
+
+**Options**:
+- `--spec <path>`: Path to spec file (default: repoforge.yaml)
+- `--dry-run`: Preview fixes without applying
+
+**Example**:
+```bash
+# See what would be fixed
+repoctl local-fix --dry-run
+
+# Apply fixes automatically
+repoctl local-fix
+
+# Use custom spec
+repoctl local-fix --spec custom-spec.yaml
+```
+
+**Fixes**:
+Automatically generates and writes:
+- Missing required workflows (CI, Security, Release)
+- Missing config files (.editorconfig, .gitattributes, CODEOWNERS)
+- Documentation files (README, CONTRIBUTING, SECURITY)
+
+After fixing, validates again to confirm all violations are resolved.
+
+---
+
+### repoctl scan
+
+Scan multiple repositories for standards compliance.
+
+**Usage**:
+```bash
+repoctl scan [options]
+```
+
+**Options**:
+- `--owner <owner>`: GitHub organization or username (required)
+- `--token <token>`: GitHub personal access token (required)
+- `--repos <list>`: Comma-separated list of repo names
+- `--org`: Scan all repos in organization
+- `--format <format>`: Output format (text or json)
+
+**Example**:
+```bash
+# Scan specific repos
+repoctl scan --owner myorg --token $GITHUB_TOKEN --repos api,web,cli
+
+# Get JSON output for scripting
+repoctl scan --owner myorg --token $GITHUB_TOKEN --repos api,web --format json
+
+# Check which repos have specs
+repoctl scan --owner myorg --token $GITHUB_TOKEN --repos api,web | grep "With Spec"
+```
+
+**Output**:
+Shows which repos have RepoForge specs and compliance status.
+
+---
+
+### repoctl policy-list
+
+List available policy packs.
+
+**Usage**:
+```bash
+repoctl policy-list
+```
+
+**Example**:
+```bash
+repoctl policy-list
+
+# Output:
+# 📦 Available Policy Packs
+#
+# startup
+#   Minimal standards for fast-moving startups
+#   CI: strict, Security: strict, Releases: permissive
+#
+# saas
+#   Production-grade standards for SaaS companies
+#   CI: enforced, Security: enforced, Releases: strict
+```
+
+---
+
+### repoctl policy-apply
+
+Apply organizational policies to a repository spec.
+
+**Usage**:
+```bash
+repoctl policy-apply [options]
+```
+
+**Options**:
+- `--repo-spec <path>`: Path to repository spec (required)
+- `--org-policy <path>`: Organization policy file
+- `--team-policy <path>`: Team policy file
+- `--check-only`: Check compliance without modifying
+- `--out <path>`: Output file (default: update repo-spec)
+
+**Example**:
+```bash
+# Create org policy
+cat > org-policy.yaml <<EOF
+standards:
+  ci: enforced
+  security: enforced
+  releases: enforced
+EOF
+
+# Check compliance
+repoctl policy-apply --repo-spec repoforge.yaml --org-policy org-policy.yaml --check-only
+
+# Apply policies to spec
+repoctl policy-apply --repo-spec repoforge.yaml --org-policy org-policy.yaml
+```
+
+**Policy Hierarchy**:
+Policies are merged with the highest precedence:
+1. Organization level (lowest)
+2. Team level (middle)
+3. Repository level (highest)
+
+More specific levels override broader ones.
+
+---
+
 ## Troubleshooting
 
 ### "Spec file not found"

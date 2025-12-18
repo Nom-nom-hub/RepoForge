@@ -11,7 +11,11 @@ import { githubInitCommand } from "./commands/github-init.js";
 import { githubValidateCommand } from "./commands/github-validate.js";
 import { githubUpgradeCommand } from "./commands/github-upgrade.js";
 import { githubAutoFixCommand } from "./commands/github-auto-fix.js";
+import { scanCommand } from "./commands/scan.js";
 import { policyListCommand } from "./commands/policy-list.js";
+import { policyApplyCommand } from "./commands/policy-apply.js";
+import { localFixCommand } from "./commands/local-fix.js";
+import { configInitCommand } from "./commands/config-init.js";
 
 const program = new Command();
 
@@ -31,7 +35,11 @@ program.addCommand(githubInitCommand);
 program.addCommand(githubValidateCommand);
 program.addCommand(githubUpgradeCommand);
 program.addCommand(githubAutoFixCommand);
+program.addCommand(localFixCommand);
+program.addCommand(scanCommand);
 program.addCommand(policyListCommand);
+program.addCommand(policyApplyCommand);
+program.addCommand(configInitCommand);
 
 program.parse(process.argv);
 
