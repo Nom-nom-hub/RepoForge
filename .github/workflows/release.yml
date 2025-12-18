@@ -3,17 +3,32 @@ name: Release
 on:
   push:
     branches: [main, master]
+    tags:
+      - 'v*'
 
 jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
     steps:
       - uses: actions/checkout@v4
       
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v3
+      - name: Check if version changed
+        id: check-version
+        run: |
+          if [[ ${{ github.ref }} == refs/tags/v* ]]; then
+            echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+            echo "is_release=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create Release
+        if: steps.check-version.outputs.is_release == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          semantic_version: 21
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ steps.check-version.outputs.version }}
+          draft: false
+          prerelease: false
