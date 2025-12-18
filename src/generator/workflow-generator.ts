@@ -18,7 +18,6 @@ export class WorkflowGenerator {
         with:
           node-version: '${nodeVersion}'
       - run: npm ci
-      - run: npm run lint
       - run: npm run type-check
       - run: npm run test
       - run: npm run build`;
