@@ -9,11 +9,14 @@ export class WorkflowGenerator {
   generateCIWorkflow(spec: Spec): Workflow {
     const { language, runtime } = spec.project;
 
+    let nodeVersion = runtime.replace("node", ""); // node20 -> 20
+    let pythonVersion = runtime.replace("python", "").replace(/(\d)(\d)/, "$1.$2"); // python311 -> 3.11
+
     let jobSteps = `
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${runtime}
+          node-version: '${nodeVersion}'
       - run: npm ci
       - run: npm run lint
       - run: npm run type-check
@@ -25,7 +28,7 @@ export class WorkflowGenerator {
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: ${runtime}
+          python-version: '${pythonVersion}'
       - run: pip install -r requirements.txt
       - run: pylint src
       - run: pytest`;
