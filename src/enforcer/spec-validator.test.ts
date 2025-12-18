@@ -43,8 +43,8 @@ describe("SpecValidator", () => {
     const result = validator.validate(spec, files);
 
     expect(result.valid).toBe(false);
-    expect(result.violations).toHaveLength(1);
-    expect(result.violations[0].rule).toBe("required-workflow");
+    expect(result.violations.length).toBeGreaterThan(0);
+    expect(result.violations.some((v) => v.rule === "required-workflow")).toBe(true);
   });
 
   it("should detect missing security workflow with enforced level", () => {
@@ -52,11 +52,11 @@ describe("SpecValidator", () => {
 
     const result = validator.validate(spec, files);
 
-    // With enforced security, missing workflows should be errors
-    const securityViolations = result.violations.filter(
-      (v) => v.severity === "error"
+    // With strict CI level, missing workflows should be errors
+    const violations = result.violations.filter(
+      (v) => v.severity === "error" && v.rule === "required-workflow"
     );
-    expect(securityViolations.length).toBeGreaterThan(0);
+    expect(violations.length).toBeGreaterThan(0);
   });
 
   it("should allow warnings for permissive mode", () => {

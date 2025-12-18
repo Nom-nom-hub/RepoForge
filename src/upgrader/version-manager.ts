@@ -106,8 +106,7 @@ export class VersionManager {
       .map(Number);
     const [targetMajor, targetMinor] = targetVersion.split(".").map(Number);
 
-    const isMajorUpgrade =
-      targetMajor > currentMajor || targetMinor > currentMinor;
+    const isMajorUpgrade = targetMajor > currentMajor;
 
     const steps: UpgradeStep[] = [];
 
