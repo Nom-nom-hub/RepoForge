@@ -129,4 +129,50 @@ export class GitHubClient {
       ref: `heads/${branchName}`,
     });
   }
+
+  async fetchFile(filePath: string): Promise<string | null> {
+    try {
+      const { data } = await this.octokit.rest.repos.getContent({
+        owner: this.owner,
+        repo: this.repo,
+        path: filePath,
+      });
+
+      if ("content" in data) {
+        return Buffer.from(data.content, "base64").toString("utf-8");
+      }
+    } catch {
+      return null;
+    }
+    return null;
+  }
+
+  async listFiles(dirPath: string): Promise<string[]> {
+    try {
+      const { data } = await this.octokit.rest.repos.getContent({
+        owner: this.owner,
+        repo: this.repo,
+        path: dirPath,
+      });
+
+      if (Array.isArray(data)) {
+        return data.map((f) => f.path);
+      }
+    } catch {
+      return [];
+    }
+    return [];
+  }
+
+  async createIssueComment(
+    issueNumber: number,
+    body: string
+  ): Promise<void> {
+    await this.octokit.rest.issues.createComment({
+      owner: this.owner,
+      repo: this.repo,
+      issue_number: issueNumber,
+      body,
+    });
+  }
 }

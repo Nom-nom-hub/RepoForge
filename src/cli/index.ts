@@ -8,6 +8,8 @@ import { validateCommand } from "./commands/validate.js";
 import { upgradeCommand } from "./commands/upgrade.js";
 import { setupCommand } from "./commands/setup.js";
 import { githubInitCommand } from "./commands/github-init.js";
+import { githubValidateCommand } from "./commands/github-validate.js";
+import { githubUpgradeCommand } from "./commands/github-upgrade.js";
 
 const program = new Command();
 
@@ -24,6 +26,8 @@ program.addCommand(validateCommand);
 program.addCommand(upgradeCommand);
 program.addCommand(setupCommand);
 program.addCommand(githubInitCommand);
+program.addCommand(githubValidateCommand);
+program.addCommand(githubUpgradeCommand);
 
 program.parse(process.argv);
 
