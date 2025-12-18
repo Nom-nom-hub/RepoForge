@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability, please email **teckmillion17@gmail.com** instead of using the issue tracker.
+If you discover a security vulnerability, please email **[ADD YOUR SECURITY CONTACT]** instead of using the issue tracker.
 
 Do not open public issues for security vulnerabilities.
 

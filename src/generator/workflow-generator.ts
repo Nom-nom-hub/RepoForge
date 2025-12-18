@@ -37,9 +37,9 @@ export class WorkflowGenerator {
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, master, develop]
   pull_request:
-    branches: [main]
+    branches: [main, master]
 
 jobs:
   test:
@@ -56,9 +56,9 @@ jobs:
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   pull_request:
-    branches: [main]
+    branches: [main, master]
   schedule:
     - cron: '0 0 * * 0'
 
@@ -95,7 +95,7 @@ jobs:
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
 
 jobs:
   release:
