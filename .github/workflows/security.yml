@@ -8,13 +8,18 @@ on:
   schedule:
     - cron: '0 0 * * 0'
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
-  security:
+  codeql:
     runs-on: ubuntu-latest
+    name: CodeQL Analysis
     steps:
       - uses: actions/checkout@v4
       
-      - name: Run CodeQL
+      - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
           languages: 'javascript'
@@ -24,9 +29,18 @@ jobs:
       
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
+
+  secrets:
+    runs-on: ubuntu-latest
+    name: Secret Scanning
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
-      - name: Dependency scanning
-        uses: actions/dependency-check_action@main
-      
-      - name: Secret scanning
-        uses: gitleaks/gitleaks-action@v2
+      - name: Scan for secrets
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          extra_args: --debug --json
