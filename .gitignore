@@ -9,3 +9,9 @@ dist/
 *.swo
 .coverage/
 .nyc_output/
+
+# Dev/session docs (only for local reference)
+DEVELOPMENT_SESSION.md
+FEATURE_EXPANSION.md
+SESSION_COMPLETE.md
+*.session.md
