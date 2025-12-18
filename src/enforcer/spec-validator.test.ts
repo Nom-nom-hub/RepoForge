@@ -38,6 +38,7 @@ describe("SpecValidator", () => {
   });
 
   it("should detect missing required CI workflow", () => {
+    spec.standards.ci = "enforced"; // Use enforced for errors instead of warnings
     const files = new Set([".github/workflows/security.yml"]);
 
     const result = validator.validate(spec, files);
@@ -48,11 +49,12 @@ describe("SpecValidator", () => {
   });
 
   it("should detect missing security workflow with enforced level", () => {
+    spec.standards.ci = "enforced";
     const files = new Set([".github/workflows/ci.yml"]);
 
     const result = validator.validate(spec, files);
 
-    // With strict CI level, missing workflows should be errors
+    // With enforced CI level, missing workflows should be errors
     const violations = result.violations.filter(
       (v) => v.severity === "error" && v.rule === "required-workflow"
     );
