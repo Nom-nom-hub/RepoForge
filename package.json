@@ -1,10 +1,19 @@
 {
   "name": "repoforge",
   "version": "0.3.0",
-  "description": "RepoForge is a CLI-first, policy-driven automation platform.",
+  "description": "CLI-first, policy-driven GitHub repository governance and automation",
   "type": "module",
+  "main": "./dist/index.js",
   "bin": {
     "repoctl": "./dist/cli/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nom-nom-hub/RepoForge.git"
+  },
+  "homepage": "https://github.com/Nom-nom-hub/RepoForge#readme",
+  "bugs": {
+    "url": "https://github.com/Nom-nom-hub/RepoForge/issues"
   },
   "scripts": {
     "build": "tsc",
@@ -12,17 +21,26 @@
     "test": "vitest",
     "test:cov": "vitest --coverage",
     "lint": "eslint src --fix",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm run type-check"
   },
   "keywords": [
     "github",
     "automation",
     "ci",
     "governance",
-    "security"
+    "security",
+    "devops",
+    "workflow",
+    "github-actions",
+    "policy",
+    "standards"
   ],
-  "author": "RepoForge",
+  "author": "RepoForge Contributors",
   "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "dependencies": {
     "commander": "^14.0.2",
     "js-yaml": "^4.1.0",
